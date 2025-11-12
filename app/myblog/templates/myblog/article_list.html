@@ -1,0 +1,38 @@
+{% extends "myblog/base.html" %}
+{% block content %}
+  <h1>Статті</h1>
+
+  <form method="get" style="margin:12px 0">
+    <label>Категорія:
+      <select name="category">
+        <option value="">— усі —</option>
+        {% for c in categories %}
+          <option value="{{ c.id }}" {% if active_category == c.id %}selected{% endif %}>{{ c.title }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label style="margin-left:12px">Тег:
+      <select name="tag">
+        <option value="">— усі —</option>
+        {% for t in tags %}
+          <option value="{{ t.id }}" {% if active_tag == t.id %}selected{% endif %}>{{ t.title }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button type="submit">Фільтрувати</button>
+  </form>
+
+  <div class="grid">
+    {% for a in articles %}
+      <article class="card">
+        <h3><a href="{% url 'myblog:article_detail' a.pk %}">{{ a.title }}</a></h3>
+        <div class="muted">{{ a.publication_date }} · {{ a.category.title }}</div>
+        <div>
+          {% for t in a.tag.all %}<span class="pill">{{ t.title }}</span>{% endfor %}
+        </div>
+      </article>
+    {% empty %}
+      <p>Нічого не знайдено.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

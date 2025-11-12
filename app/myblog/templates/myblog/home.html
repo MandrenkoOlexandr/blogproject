@@ -1,0 +1,18 @@
+{% extends "myblog/base.html" %}
+{% block content %}
+  <h1>Останні публікації</h1>
+  <div class="grid">
+    {% for a in articles %}
+      <article class="card">
+        <h3><a href="{% url 'myblog:article_detail' a.pk %}">{{ a.title }}</a></h3>
+        <div class="muted">{{ a.publication_date }} · {{ a.category.title }}</div>
+        {% if a.image %}<img src="{{ a.image }}" alt="" style="max-width:100%; margin:8px 0; border-radius:8px">{% endif %}
+        <div>
+          {% for t in a.tag.all %}<span class="pill">{{ t.title }}</span>{% empty %}<span class="muted">без тегів</span>{% endfor %}
+        </div>
+      </article>
+    {% empty %}
+      <p>Ще немає опублікованих статей.</p>
+    {% endfor %}
+  </div>
+{% endblock %}
