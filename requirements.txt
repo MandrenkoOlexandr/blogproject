@@ -1,0 +1,4 @@
+Django==5.2.8
+uvicorn[standard]==0.30.6
+PyMySQL==1.1.0
+cryptography==44.0.1

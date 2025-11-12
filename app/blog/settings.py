@@ -11,21 +11,24 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret")
+DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
+ALLOWED_HOSTS = ["*"]
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-iiom%b1gbigqvafrt&*+c)t-o%_bwe7lf*9!i$klxhlyy+7ned'
+ASGI_APPLICATION = "blog.asgi.application"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+STATIC_URL = "/static/"
+STATIC_ROOT = Path(__file__).resolve().parent.parent / "staticfiles"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(__file__).resolve().parent.parent / "media"
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -74,11 +77,17 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("MYSQL_DATABASE", "blogdb"),
+        "USER": os.getenv("MYSQL_USER", "bloguser"),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD", "blogpass"),
+        "HOST": os.getenv("MYSQL_HOST", "db"),
+        "PORT": os.getenv("MYSQL_PORT", "3306"),
+        "OPTIONS": {"charset": "utf8mb4"},
     }
 }
+
 
 
 # Password validation
@@ -111,11 +120,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
