@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+def index(request):
+    # тимчасово без БД; далі додамо вибірку 3 останніх опублікованих статей
+    return render(request, "myblog/index.html")
