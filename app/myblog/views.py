@@ -14,6 +14,19 @@ def home(request):
     )
     return render(request, "myblog/home.html", {"articles": articles})
 
+def category_list(request):
+    cats = Category.objects.all().order_by("title")
+    # підрахунок опублікованих статей у кожній категорії
+    # (щоб не робити N запитів)
+    cats = cats.prefetch_related(
+        models.Prefetch(
+            "articles",
+            queryset=Article.objects.filter(is_published=True),
+            to_attr="published_articles"
+        )
+    )
+    return render(request, "myblog/category_list.html", {"categories": cats})
+
 
 def article_list(request):
     qs = (

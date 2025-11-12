@@ -1,0 +1,21 @@
+{% extends "myblog/base.html" %}
+{% block content %}
+  <h1>Категорії</h1>
+  <div class="grid">
+    {% for c in categories %}
+      <div class="card">
+        <h3>{{ c.title }}</h3>
+        {% if c.icon %}<div class="muted">{{ c.icon }}</div>{% endif %}
+        {% if c.description %}<p>{{ c.description }}</p>{% endif %}
+        <div class="muted">
+          Опублікованих статей: {{ c.published_articles|length }}
+        </div>
+        <p style="margin-top:8px">
+          <a href="{% url 'myblog:article_list' %}?category={{ c.id }}">Переглянути статті</a>
+        </p>
+      </div>
+    {% empty %}
+      <p>Категорій ще немає.</p>
+    {% endfor %}
+  </div>
+{% endblock %}
