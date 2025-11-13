@@ -28,6 +28,8 @@ STATIC_URL = "/static/"
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(__file__).resolve().parent.parent / "media"
+LOGIN_REDIRECT_URL = "myblog:home"
+LOGOUT_REDIRECT_URL = "myblog:home"
 
 
 
