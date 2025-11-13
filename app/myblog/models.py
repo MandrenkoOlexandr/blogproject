@@ -77,6 +77,11 @@ class Comment(models.Model):
         verbose_name = "Коментар"
         verbose_name_plural = "Коментарі"
         ordering = ("-publication_date",)
+        permissions = [
+            ("change_own_comment", "Can change own comment"),
+            ("delete_own_comment", "Can delete own comment"),
+            ("delete_any_comment", "Can delete any comment"),
+        ]
 
     def __str__(self) -> str:
         return f"{self.author}: {self.text[:30]}..."
