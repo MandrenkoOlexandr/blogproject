@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     title = models.CharField(max_length=150, unique=True, verbose_name="Назва")
@@ -27,61 +27,54 @@ class Tag(models.Model):
     def __str__(self) -> str:
         return self.title
 
-
 class Article(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Заголовок")
-    author = models.CharField(max_length=120, verbose_name="Автор")
-    text = models.TextField(verbose_name="Текст")
-    # за умовою image — це посилання (а не завантаження файлу)
-    image = models.URLField(blank=True, verbose_name="URL зображення")
-    publication_date = models.DateField(verbose_name="Дата публікації")
-    is_published = models.BooleanField(default=False, verbose_name="Опубліковано")
-
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.PROTECT,    # не даємо видалити кат., якщо є статті
-        related_name="articles",
-        verbose_name="Категорія",
-    )
-    tag = models.ManyToManyField(
-        Tag,
-        related_name="articles",
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255, blank=True)   # імʼя авторa (анонім)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        verbose_name="Теги",
+        related_name="articles"
     )
+    text = models.TextField()
+    image = models.CharField(max_length=255, blank=True)
+    publication_date = models.DateField()
+    is_published = models.BooleanField(default=False)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    tag = models.ManyToManyField(Tag, blank=True)
 
-    class Meta:
-        verbose_name = "Стаття"
-        verbose_name_plural = "Статті"
-        ordering = ("-publication_date", "title")
-        indexes = [
-            models.Index(fields=["is_published", "publication_date"]),
-        ]
-
-    def __str__(self) -> str:
+    def __str__(self):
         return self.title
 
 
 class Comment(models.Model):
-    text = models.TextField(verbose_name="Текст")
-    author = models.CharField(max_length=120, verbose_name="Автор")
-    publication_date = models.DateField(verbose_name="Дата публікації")
+    text = models.TextField()
+    author = models.CharField(max_length=255, blank=True)  # анонімне імʼя
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="comments"
+    )
+    publication_date = models.DateField()
     article = models.ForeignKey(
-        Article,
-        on_delete=models.CASCADE,    # видаляємо коментарі разом зі статтею
+        "Article",
+        on_delete=models.CASCADE,
         related_name="comments",
-        verbose_name="Стаття",
     )
 
     class Meta:
         verbose_name = "Коментар"
         verbose_name_plural = "Коментарі"
         ordering = ("-publication_date",)
+
         permissions = [
             ("change_own_comment", "Can change own comment"),
             ("delete_own_comment", "Can delete own comment"),
             ("delete_any_comment", "Can delete any comment"),
         ]
 
-    def __str__(self) -> str:
-        return f"{self.author}: {self.text[:30]}..."
+    def __str__(self):
+        return self.text[:30]
